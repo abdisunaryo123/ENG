@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>English Fun – Kelas 5</title>
+<style>
+:root{--mango:#FFB703;--leaf:#2D9A5B;--ink:#0B3C49;--tom:#E63946;--paper:#FFF8E7;--sky:#BDE7F5;--r:18px}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Trebuchet MS","Segoe UI",sans-serif;color:var(--ink);background:linear-gradient(var(--sky),#E8F7E4);min-height:100vh;font-size:clamp(16px,2.2vw,20px)}
+button{font:inherit;cursor:pointer;border:0;border-radius:14px;padding:.6em 1.1em;background:var(--leaf);color:#fff;font-weight:700;box-shadow:0 4px 0 #1b6b3c;touch-action:manipulation}
+button:active{transform:translateY(3px);box-shadow:0 1px 0 #1b6b3c}
+button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+button.alt{background:var(--mango);color:var(--ink);box-shadow:0 4px 0 #b98300}
+button:disabled{opacity:.5}
+header{display:flex;gap:.6em;align-items:center;justify-content:space-between;padding:.6em 1em;background:var(--ink);color:#fff;flex-wrap:wrap}
+header b{font-size:1.3em;color:var(--mango)}
+.pill{background:#ffffff22;border-radius:99px;padding:.2em .8em}
+main{max-width:980px;margin:0 auto;padding:1em}
+.card{background:var(--paper);border:3px solid var(--ink);border-radius:var(--r);padding:1em 1.2em;margin-bottom:1em}
+h2{margin:.2em 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.8em}
+.lv{background:#fff;color:var(--ink);box-shadow:0 4px 0 #9bb;border:3px solid var(--ink);text-align:center;padding:.7em}
+.lv.lock{opacity:.45}
+.big{font-size:clamp(56px,12vw,96px);text-align:center;line-height:1.1}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.7em;margin-top:.8em}
+.opt{background:#fff;color:var(--ink);border:3px solid var(--ink);box-shadow:0 4px 0 #9bb}
+.opt.ok{background:#b8f0c8}.opt.no{background:#ffc9ce;animation:sh .3s}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.bar{height:14px;background:#fff;border-radius:99px;border:2px solid var(--ink);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--mango);transition:width .4s}
+#fb{min-height:3em;margin-top:.8em;padding:.7em 1em;border-radius:14px;background:#fff;border:2px dashed var(--ink);animation:pop .25s}
+.tile{background:#fff;color:var(--ink);border:3px solid var(--ink);box-shadow:0 3px 0 #9bb;margin:.25em}
+.zone{min-height:3.4em;border:3px dashed var(--ink);border-radius:14px;padding:.3em;background:#fff8}
+.mg{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.6em}
+.mc{background:#fff;color:var(--ink);border:3px solid var(--ink);box-shadow:0 3px 0 #9bb;min-height:3.4em}
+.mc.sel{background:var(--mango)}.mc.done{background:#b8f0c8;opacity:.7}
+.shop{display:flex;align-items:center;gap:.6em;background:#fff;border:2px solid var(--ink);border-radius:14px;padding:.4em .8em;margin:.4em 0}
+.shop span.e{font-size:2em}.shop .n{flex:1}.shop button{padding:.2em .8em}
+.bub{background:var(--mango);border-radius:18px;padding:.7em 1em;font-weight:700}
+.toast{position:fixed;top:70px;right:12px;background:var(--tom);color:#fff;padding:.6em 1em;border-radius:14px;animation:pop .3s;z-index:9}
+.stars{font-size:2.4em;text-align:center}
+.row{display:flex;gap:.6em;flex-wrap:wrap;justify-content:center;margin-top:.8em}
+.ach{display:inline-block;background:#fff;border:2px solid var(--ink);border-radius:99px;padding:.2em .8em;margin:.2em;opacity:.4}
+.ach.on{opacity:1;background:var(--mango)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style></head><body>
+<header><b>🥭 English Fun</b><span><span class="pill" id="hs">⭐ 0</span> <span class="pill" id="hc">🪙 0</span> <button class="alt" id="mb" onclick="toggleMus()" aria-label="Musik">🎵 Musik</button></span></header>
+<main id="app"></main>
+<script>
+"use strict";
+/* ===== DATA ===== */
+var PR={mango:5000,spinach:3000,carrot:2000,tomato:2000,banana:4000};
+var IC={mango:"🥭",spinach:"🥬",carrot:"🥕",tomato:"🍅",banana:"🍌"};
+var L=[
+{n:"Fruits & Veggies",i:"🧺",g:"Mengenali nama buah dan sayur dalam bahasa Inggris.",s:"Kamu membantu Ibu di pasar. Ketuk benda yang benar!",r:[
+{t:"mcq",q:"What is this?",e:"🥭",o:["mango","apple","banana"],a:0,f:"Benar! Mango = mangga. 🥭"},
+{t:"mcq",q:"What is this?",e:"🥬",o:["carrot","spinach","tomato"],a:1,f:"Spinach = bayam, sayur berdaun hijau."},
+{t:"mcq",q:"What is this?",e:"🥕",o:["carrot","onion","potato"],a:0,f:"Carrot = wortel."},
+{t:"mcq",q:"Which one is a fruit?",e:"🥬 🥭 🥕",o:["spinach","mango","carrot"],a:1,f:"Mango adalah buah (fruit). Spinach dan carrot adalah sayur (vegetable).",h:"Fruit = buah."},
+{t:"mcq",q:"Which one is a vegetable?",e:"🍌 🥬 🍎",o:["banana","spinach","apple"],a:1,f:"Spinach adalah sayur (vegetable).",h:"Vegetable = sayur."}]},
+{n:"Word Match",i:"🃏",g:"Memasangkan kata Inggris dan artinya.",s:"Pasangkan kartu bahasa Inggris dengan bahasa Indonesia.",r:[
+{t:"match",p:[["mango","mangga","🥭"],["spinach","bayam","🥬"],["carrot","wortel","🥕"],["tomato","tomat","🍅"],["banana","pisang","🍌"],["egg","telur","🥚"]]}]},
+{n:"At the Market",i:"🗣️",g:"Memilih kalimat yang tepat dalam jual beli.",s:"Kamu berbicara dengan penjual buah. Pilih jawaban yang sopan!",r:[
+{t:"mcq",q:"Seller: “Good morning! Can I help you?” You say:",e:"👩‍🌾",o:["Yes, I want some mangoes, please.","No, I am sleeping.","It is in the kitchen."],a:0,f:"Kalimat meminta barang: “I want ..., please.”"},
+{t:"mcq",q:"You want to know the price. You ask:",e:"💰",o:["How much is it?","How are you?","What is your name?"],a:0,f:"“How much is it?” = Berapa harganya?"},
+{t:"mcq",q:"Seller: “Anything else?” You want spinach too. You say:",e:"🥬",o:["Yes, I want a bunch of spinach, please.","I am fine, thank you.","Goodbye, mangoes."],a:0,f:"“Anything else?” = Ada lagi? Jawab dengan barang tambahan."},
+{t:"mcq",q:"The seller gives you the mangoes. You say:",e:"🛍️",o:["Good night.","Thank you.","Sorry."],a:1,f:"“Thank you.” = Terima kasih."},
+{t:"mcq",q:"“I want two kilos of mangoes.” artinya...",e:"⚖️",o:["Saya mau dua kilo mangga.","Mangga ini dua kilo.","Saya punya dua mangga."],a:0,f:"I want = saya mau/ingin."}]},
+{n:"Make a Sentence",i:"🧩",g:"Menyusun kalimat jual beli yang benar.",s:"Ketuk kata sesuai urutan agar kalimat benar, lalu tekan Periksa.",r:[
+{t:"order",w:["I","want","three","mangoes,","please."],f:"I want three mangoes, please. = Saya mau tiga mangga."},
+{t:"order",w:["How","much","is","the","spinach?"],f:"How much is the spinach? = Berapa harga bayamnya?"},
+{t:"order",w:["Can","I","help","you?"],f:"Can I help you? = Bisa saya bantu?"},
+{t:"order",w:["Here","is","your","change."],f:"Here is your change. = Ini kembalian Anda."}]},
+{n:"Be the Shopper",i:"🛒",g:"Berbelanja sesuai pesanan dalam bahasa Inggris.",s:"Baca pesanan, lalu isi keranjang dengan tombol + dan −.",r:[
+{t:"shop",q:"Please buy three mangoes.",need:{mango:3}},
+{t:"shop",q:"I want two mangoes and one bunch of spinach, please.",need:{mango:2,spinach:1}},
+{t:"shop",q:"Buy four carrots and two tomatoes, please.",need:{carrot:4,tomato:2}},
+{t:"shop",q:"I want three mangoes, two bunches of spinach and one banana, please.",need:{mango:3,spinach:2,banana:1}}]},
+{n:"Kitchen Tools",i:"🍳",g:"Mengenali alat dapur dalam bahasa Inggris.",s:"Selamat datang di dapur! Kenali alat-alatnya.",r:[
+{t:"mcq",q:"What is this?",e:"🔪",o:["knife","spoon","plate"],a:0,f:"Knife = pisau."},
+{t:"mcq",q:"What is this?",e:"🥄",o:["pot","spoon","stove"],a:1,f:"Spoon = sendok."},
+{t:"mcq",q:"What is this?",e:"🍳",o:["frying pan","plate","fridge"],a:0,f:"Frying pan = wajan/penggorengan."},
+{t:"mcq",q:"What is this?",e:"🍽️",o:["knife","pot","plate"],a:2,f:"Plate = piring."},
+{t:"mcq",q:"What is this?",e:"🍲",o:["pot","spoon","stove"],a:0,f:"Pot = panci."}]},
+{n:"Use the Tools",i:"👩‍🍳",g:"Menghubungkan alat dapur dengan fungsinya.",s:"Pilih kata yang melengkapi kalimat.",r:[
+{t:"mcq",q:"We cut vegetables with a ____.",e:"🥕🔪",o:["knife","spoon","plate"],a:0,f:"We cut with a knife."},
+{t:"mcq",q:"We fry eggs in a ____.",e:"🥚🍳",o:["pot","frying pan","fridge"],a:1,f:"We fry eggs in a frying pan."},
+{t:"mcq",q:"We eat soup with a ____.",e:"🍜",o:["spoon","knife","stove"],a:0,f:"We eat soup with a spoon."},
+{t:"mcq",q:"We keep milk and fruit cold in the ____.",e:"🥛🍎",o:["stove","fridge","plate"],a:1,f:"Fridge = kulkas, tempat menyimpan makanan agar dingin."},
+{t:"mcq",q:"We cook soup in a ____.",e:"🍲",o:["pot","plate","knife"],a:0,f:"We cook soup in a pot."}]},
+{n:"Kitchen Match",i:"🔥",g:"Memasangkan nama alat dapur dan artinya.",s:"Cocokkan kartu alat dapur!",r:[
+{t:"match",p:[["knife","pisau","🔪"],["spoon","sendok","🥄"],["plate","piring","🍽️"],["pot","panci","🍲"],["frying pan","wajan","🍳"],["stove","kompor","🔥"]]}]},
+{n:"Cooking Steps",i:"📋",g:"Menyusun langkah memasak dengan First, Then, Next, Finally.",s:"Susun langkah resep dari awal sampai akhir.",r:[
+{t:"order",w:["First, heat the pan.","Then, crack an egg into the pan.","Next, fry the egg.","Finally, put it on a plate."],f:"Urutan: First → Then → Next → Finally.",big:1,q:"🍳 Fried Egg"},
+{t:"order",w:["First, wash the mangoes.","Then, cut the mangoes.","Next, put them in a bowl.","Finally, add sugar and mix."],f:"Urutan resep: cuci, potong, masukkan, campur.",big:1,q:"🥭 Mango Salad"},
+{t:"order",w:["First, wash the spinach.","Then, cut the carrots.","Next, boil water in a pot.","Finally, cook the vegetables."],f:"Urutan resep sup sayur.",big:1,q:"🍲 Vegetable Soup"}]},
+{n:"Super Chef Boss",i:"👑",g:"Gabungan: belanja dan memasak.",s:"Tantangan terakhir! Belanja lalu memasak seperti koki hebat.",r:[
+{t:"mcq",q:"One mango costs Rp5.000. You buy three mangoes. How much do you pay?",e:"🥭🥭🥭",o:["Rp10.000","Rp15.000","Rp20.000"],a:1,f:"3 × 5.000 = 15.000."},
+{t:"shop",q:"I want two mangoes and two bunches of spinach, please.",need:{mango:2,spinach:2}},
+{t:"mcq",q:"Mother says: “Please cut the carrots.” Which tool do you use?",e:"🥕",o:["spoon","knife","fridge"],a:1,f:"We cut with a knife."},
+{t:"match",p:[["pot","panci","🍲"],["tomato","tomat","🍅"],["stove","kompor","🔥"],["spinach","bayam","🥬"]]},
+{t:"order",w:["Can","I","have","two","mangoes,","please?"],f:"Can I have two mangoes, please? = Boleh saya minta dua mangga?"},
+{t:"order",w:["First, wash the tomatoes.","Then, cut the tomatoes.","Next, put them in a bowl.","Finally, eat the salad."],f:"Urutan langkah yang benar.",big:1,q:"🍅 Tomato Salad"}]}
+];
+var AC={first:"🥇 Pembelanja Pertama",star3:"⭐ Bintang Sempurna",combo5:"🔥 Combo Master",coin100:"🪙 Kolektor Koin",all:"👑 Juara English Fun"};
+/* ===== STATE ===== */
+var P={coins:0,stars:{},ach:{},best:{}};
+try{var sv=JSON.parse(localStorage.getItem("englishfun5")||"null");if(sv&&typeof sv==="object")P=Object.assign(P,sv)}catch(e){}
+function save(){try{localStorage.setItem("englishfun5",JSON.stringify(P))}catch(e){}}
+var G=null,$=function(s){return document.querySelector(s)},app=$("#app");
+function totStars(){var t=0;for(var k in P.stars)t+=P.stars[k];return t}
+function hud(){$("#hs").textContent="⭐ "+totStars();$("#hc").textContent="🪙 "+P.coins}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function shuf(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t}return b}
+/* ===== AUDIO ===== */
+var ac=null,mus=false,mt=null,mi=0;
+function snd(f,d,t,v){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();var o=ac.createOscillator(),g=ac.createGain();o.type=t||"sine";o.frequency.value=f;g.gain.value=v||.15;o.connect(g);g.connect(ac.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+(d||.12));o.stop(ac.currentTime+(d||.12))}catch(e){}}
+function sOk(){snd(660);setTimeout(function(){snd(880)},90)}
+function sBad(){snd(200,.2,"triangle")}
+function sWin(){[523,659,784,1047].forEach(function(f,i){setTimeout(function(){snd(f,.2)},i*120)})}
+function toggleMus(){mus=!mus;$("#mb").textContent=mus?"🔇 Matikan":"🎵 Musik";clearInterval(mt);if(mus){var n=[523,659,784,659,587,698,880,698];mt=setInterval(function(){snd(n[mi++%8],.3,"triangle",.05)},420)}}
+function toast(t){var d=document.createElement("div");d.className="toast";d.textContent=t;document.body.appendChild(d);setTimeout(function(){d.remove()},2600)}
+function unlock(k){if(!P.ach[k]){P.ach[k]=1;toast("🏆 Pencapaian: "+AC[k]);save()}}
+/* ===== MENU ===== */
+function menu(){
+  G=null;hud();var h='<div class="card"><h2>Welcome, Chef! 👋</h2><p>Belajar Bahasa Inggris: <b>Buying Some Mangoes and Spinach</b> dan <b>In the Kitchen</b>. Selesaikan level untuk membuka level berikutnya!</p></div><div class="grid">';
+  L.forEach(function(l,i){var open=i==0||P.stars[i-1]>0,st=P.stars[i]||0;
+    h+='<button class="lv '+(open?'':'lock')+'" '+(open?'':'disabled')+' onclick="intro('+i+')"><div style="font-size:2.2em">'+(open?l.i:'🔒')+'</div><b>Level '+(i+1)+'</b><br>'+esc(l.n)+'<br>'+(st?"⭐".repeat(st):"☆☆☆")+'</button>'});
+  h+='</div><div class="card" style="margin-top:1em"><b>Pencapaian</b><br>';
+  for(var k in AC)h+='<span class="ach '+(P.ach[k]?'on':'')+'">'+AC[k]+'</span>';
+  h+='<div class="row"><button class="alt" onclick="if(confirm(\'Hapus semua progres?\')){P={coins:0,stars:{},ach:{},best:{}};save();menu()}">Reset progres</button></div></div>';
+  app.innerHTML=h}
+function intro(i){var l=L[i];G={li:i,ri:0,score:0,mist:0,combo:0,mc:0,hint:0,tried:0};
+  app.innerHTML='<div class="card"><div class="big">'+l.i+'</div><h2 style="text-align:center">Level '+(i+1)+': '+esc(l.n)+'</h2><p>📖 <b>Misi:</b> '+esc(l.s)+'</p><p>🎯 <b>Tujuan belajar:</b> '+esc(l.g)+'</p><p>✅ <b>Syarat selesai:</b> Selesaikan semua '+l.r.length+' tantangan. Boleh mencoba lagi kalau salah!</p><div class="row"><button class="alt" onclick="menu()">◀ Menu</button><button onclick="round()">Mulai! ▶</button></div></div>'}
+/* ===== ROUND ===== */
+function round(){var l=L[G.li],r=G.r=l.r[G.ri];G.tried=0;G.hint=0;G.done=false;
+  app.innerHTML='<div class="card"><div style="display:flex;justify-content:space-between;gap:.5em;flex-wrap:wrap"><b>Level '+(G.li+1)+' • '+esc(l.n)+'</b><span>Skor '+G.score+(G.combo>1?' • 🔥 Combo x'+G.combo:'')+'</span></div><div class="bar"><i style="width:'+(G.ri/l.r.length*100)+'%"></i></div><div id="st" style="margin-top:.8em"></div><div id="fb">Ayo coba! 😊</div><div class="row"><button class="alt" id="hb" onclick="hint()">💡 Petunjuk</button><button id="nx" style="display:none" onclick="nextR()">Lanjut ▶</button><button class="alt" onclick="if(confirm(\'Keluar ke menu?\'))menu()">Menu</button></div></div>';
+  var f={mcq:mcq,match:match,order:order,shop:shop}[r.t];f(r,$("#st"))}
+function fb(t){$("#fb").innerHTML=t}
+function hint(){var r=G.r;G.hint=1;var t=r.h;
+  if(!t){if(r.t=="mcq")t="Baca soal pelan-pelan. Salah satu pilihan yang tidak cocok: <b>"+esc(r.o[(r.a+1)%r.o.length])+"</b>.";
+  else if(r.t=="match")t="Cari kartu yang artinya sama. Lihat gambar di kartu Inggris!";
+  else if(r.t=="order")t="Kata pertama: <b>"+esc(r.w[0])+"</b>."+(r.big?" Ingat: First, Then, Next, Finally.":"");
+  else t="Hitung jumlah yang diminta, contoh: three = 3, two = 2, one = 1."}
+  fb("💡 "+t)}
+function good(){G.done=true;var first=!G.tried&&!G.hint;G.combo++;if(G.combo>G.mc)G.mc=G.combo;
+  var p=first?15:8,b=G.combo>=3?5:0;G.score+=p+b;P.coins+=first?3:1;if(G.mc>=5)unlock("combo5");save();hud();sOk();
+  $("#nx").style.display="";$("#nx").focus();var o=G.r.t=="mcq"||G.r.t=="match"||G.r.t=="order"||G.r.t=="shop";
+  fb("✅ <b>Hebat!</b> +"+(p+b)+" poin"+(b?" (bonus combo!)":"")+(G.r.f?"<br>"+G.r.f:""))}
+function bad(m){G.tried=1;G.mist++;G.combo=0;sBad();fb("❌ "+(m||"Belum tepat. Tidak apa-apa, coba lagi!")+" 💪")}
+function nextR(){G.ri++;if(G.ri>=L[G.li].r.length)finish();else round()}
+/* ===== TYPES ===== */
+function mcq(r,el){var h='<div class="big">'+r.e+'</div><h3 style="text-align:center">'+esc(r.q)+'</h3><div class="opts">';
+  r.o.forEach(function(o,i){h+='<button class="opt" data-i="'+i+'">'+esc(o)+'</button>'});el.innerHTML=h+'</div>';
+  el.querySelectorAll(".opt").forEach(function(b){b.onclick=function(){if(G.done)return;var i=+b.dataset.i;
+    if(i==r.a){b.classList.add("ok");el.querySelectorAll(".opt").forEach(function(x){x.disabled=true});good()}else{b.classList.add("no");b.disabled=true;bad()}}})}
+function match(r,el){var cards=[];r.p.forEach(function(p,i){cards.push({k:i,t:p[2]+" "+p[0]});cards.push({k:i,t:p[1]})});cards=shuf(cards);var sel=null,left=r.p.length,mis=0;
+  el.innerHTML='<h3 style="text-align:center">Pasangkan bahasa Inggris dan Indonesia</h3><div class="mg"></div>';var g=el.querySelector(".mg");
+  cards.forEach(function(c){var b=document.createElement("button");b.className="mc";b.textContent=c.t;g.appendChild(b);
+    b.onclick=function(){if(b.classList.contains("done")||b===sel)return;
+      if(!sel){sel=b;b.classList.add("sel");return}
+      if(sel._k==c.k){sel.className="mc done";b.className="mc done";sel=null;snd(700,.1);if(--left==0){if(mis)G.tried=1;good()}}
+      else{mis++;G.mist++;G.combo=0;sBad();sel.classList.remove("sel");sel=null;fb("❌ Belum cocok. Coba pasangan lain!")}};
+    b._k=c.k})}
+function order(r,el){var ws=shuf(r.w.map(function(w,i){return{w:w,i:i}}));if(ws.length>1&&ws.every(function(x,i){return x.i==i}))ws.reverse();var pool=ws,ans=[];
+  function draw(){var h=(r.q?'<h3 style="text-align:center">'+esc(r.q)+'</h3>':'<h3 style="text-align:center">Susun menjadi kalimat yang benar</h3>')+'<div class="zone" id="za"></div><p>Pilihan kata:</p><div id="zp"></div><div class="row"><button id="ck">Periksa ✔</button></div>';
+    el.innerHTML=h;fill($("#za"),ans,function(x){ans.splice(ans.indexOf(x),1);pool.push(x);draw()});fill($("#zp"),pool,function(x){if(G.done)return;pool.splice(pool.indexOf(x),1);ans.push(x);draw()});
+    $("#ck").onclick=function(){if(G.done)return;if(ans.length<r.w.length){fb("Pakai semua kata dulu ya! 😊");return}
+      var ok=ans.every(function(x,i){return x.i==i});if(ok)good();else bad("Urutannya belum benar. Ketuk kata untuk mengembalikan.")}}
+  function fill(z,a,fn){a.forEach(function(x){var b=document.createElement("button");b.className="tile";b.textContent=x.w;b.onclick=function(){fn(x)};z.appendChild(b)})}
+  draw()}
+function shop(r,el){var c={};for(var k in PR)c[k]=0;
+  function draw(){var tot=0,h='<div class="bub">🧑‍🍳 Customer: “'+esc(r.q)+'”</div>';
+    for(var k in PR){tot+=c[k]*PR[k];h+='<div class="shop"><span class="e">'+IC[k]+'</span><span class="n"><b>'+k+'</b> <small>Rp'+PR[k].toLocaleString("id-ID")+'</small></span><button data-k="'+k+'" data-d="-1" aria-label="kurang">−</button><b style="min-width:1.5em;text-align:center">'+c[k]+'</b><button data-k="'+k+'" data-d="1" aria-label="tambah">+</button></div>'}
+    h+='<p>🛒 Total belanja: <b>Rp'+tot.toLocaleString("id-ID")+'</b></p><div class="row"><button id="ck">Bayar ✔</button></div>';el.innerHTML=h;
+    el.querySelectorAll("[data-k]").forEach(function(b){b.onclick=function(){if(G.done)return;var k=b.dataset.k;c[k]=Math.max(0,Math.min(9,c[k]+ +b.dataset.d));snd(500,.05);draw()}});
+    $("#ck").onclick=function(){if(G.done)return;var ok=true;for(var k in PR)if((r.need[k]||0)!==c[k])ok=false;
+      if(ok){r.f="Pesanan benar! Total: Rp"+tot.toLocaleString("id-ID")+". Thank you!";good()}else bad("Keranjangmu belum sesuai pesanan. Baca lagi kalimatnya.")}}
+  draw()}
+/* ===== RESULT ===== */
+function finish(){var i=G.li,st=G.mist==0?3:G.mist<=3?2:1;G.score+=st*10;P.coins+=st*5;
+  if((P.stars[i]||0)<st)P.stars[i]=st;if((P.best[i]||0)<G.score)P.best[i]=G.score;
+  unlock("first");if(st==3)unlock("star3");if(P.coins>=100)unlock("coin100");
+  var all=true;L.forEach(function(x,k){if(!P.stars[k])all=false});if(all)unlock("all");save();hud();sWin();
+  var nxt=i<L.length-1;
+  app.innerHTML='<div class="card"><h2 style="text-align:center">🎉 Level '+(i+1)+' Selesai!</h2><div class="stars">'+"⭐".repeat(st)+"☆".repeat(3-st)+'</div><p style="text-align:center">Skor: <b>'+G.score+'</b> (terbaik '+P.best[i]+') • Kesalahan: '+G.mist+' • Combo terbaik: '+G.mc+'<br>🪙 Koin total: '+P.coins+'</p><p style="text-align:center">'+(st==3?"Sempurna! Kamu hebat!":st==2?"Bagus! Coba lagi untuk 3 bintang.":"Terus berlatih, kamu pasti bisa!")+'</p><div class="row"><button class="alt" onclick="menu()">Menu</button><button class="alt" onclick="intro('+i+')">Ulangi 🔁</button>'+(nxt?'<button onclick="intro('+(i+1)+')">Level berikutnya ▶</button>':'<button onclick="menu()">🏆 Kamu Juara!</button>')+'</div></div>'}
+menu();
+</script></body></html>
